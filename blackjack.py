@@ -22,10 +22,10 @@ def draw_a_card():
 def get_user_choice():
     ''' Get input whether user wants to draw another card.
     Keep asking user for input if it is either 'y' / 'n'. '''
-    choice = input("Type 'y' to get another card, type 'n' to pass: ").lower()
+    choice = input("\nType 'y' to get another card, type 'n' to pass: ").lower()
     while choice not in ['y', 'n']:
         print("Please only choose y/n. Try again!")
-        choice = input("Type 'y' to get another card, type 'n' to pass: ").lower()
+        choice = input("\nType 'y' to get another card, type 'n' to pass: ").lower()
     return choice
 
 
@@ -33,6 +33,9 @@ def get_remaining_computer_cards(computer_cards):
     ''' It picks the hands for the computer. '''
     while sum(computer_cards) < 17:
         computer_cards.append(draw_a_card())
+        if sum(computer_cards) > 21 and 11 in computer_cards:
+                computer_cards.remove(11)
+                computer_cards.append(1)
     return computer_cards
 
 
@@ -65,11 +68,14 @@ def blackjack():
     while choice == 'y' and sum(user_cards) < 21:
         print(f"    Your hand: {user_cards}, score: {sum(user_cards)}")
         print(f"    Computer's hand: {computer_cards}, score: {sum(computer_cards)}")
-        choice = input("Type 'y' to get another card, type 'n' to pass: ")
+        choice = input("\nType 'y' to get another card, type 'n' to pass: ")
         if choice == 'y':
             new_card = draw_a_card()
-            print(f"    Your drew: {user_cards}")
+            print(f"    Your drew: {new_card}")
             user_cards.append(new_card)
+            if sum(user_cards) > 21 and 11 in user_cards:
+                user_cards.remove(11)
+                user_cards.append(1)
     if sum(user_cards) <= 21:
         computer_cards = get_remaining_computer_cards(computer_cards)
     select_winner(user_cards, computer_cards)

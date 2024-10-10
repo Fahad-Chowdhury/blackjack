@@ -29,22 +29,34 @@ def get_user_choice():
     return choice
 
 
+def check_for_aces(cards):
+    ''' It checks for aces (11) and replaces with one if sum exceeds 21. '''
+    if sum(cards) > 21 and 11 in cards:
+        cards.remove(11)
+        cards.append(1)
+    return cards
+
+
 def get_remaining_computer_cards(computer_cards):
     ''' It picks the hands for the computer. '''
     while sum(computer_cards) < 17:
         computer_cards.append(draw_a_card())
-        if sum(computer_cards) > 21 and 11 in computer_cards:
-                computer_cards.remove(11)
-                computer_cards.append(1)
+        computer_cards = check_for_aces(computer_cards)
     return computer_cards
 
 
-def select_winner(user_cards, computer_cards):
-    ''' Selects and displays a winner based on the drawn cards. '''
-    user_total = sum(user_cards)
-    comp_total = sum(computer_cards)
-    print(f"\n    Your final hand: {user_cards}, score: {user_total}")
-    print(f"    Computer's final hand: {computer_cards}, score: {comp_total}")
+def print_blackjack_message(user_total, comp_total):
+    ''' Print message if it's a blackjack. '''
+    if user_total == 21 == comp_total:
+        print("\nYou and computer both have a BLACKJACK!")
+    elif user_total == 21:
+        print("\nYou have a BLACKJACK!")
+    elif comp_total == 21:
+        print("\nComputer has a BLACKJACK!")
+
+
+def display_winning_message(user_total, comp_total):
+    ''' Print winning message. '''
     if user_total > 21:
         print("\n> You went over, YOU LOSE (ᵟຶ︵ ᵟຶ) \n")
     elif comp_total > 21:
@@ -57,13 +69,25 @@ def select_winner(user_cards, computer_cards):
         print("\n> Congratulations! You have a higher score, YOU WIN! \\(ᵔᵕᵔ)/ \n")
 
 
+def select_winner(user_cards, computer_cards):
+    ''' Selects and displays a winner based on the drawn cards. '''
+    user_total = sum(user_cards)
+    comp_total = sum(computer_cards)
+    print(f"\n    Your final hand: {user_cards}, score: {user_total}")
+    print(f"    Computer's final hand: {computer_cards}, score: {comp_total}")
+    print_blackjack_message(user_total, comp_total)
+    display_winning_message(user_total, comp_total)
+
+
 def blackjack():
     ''' Main functionality of blackjack game. '''
     clear()
     print(blackjack_art)
+
     user_cards = [draw_a_card() for _ in range(2)]
-    computer_cards = []
-    computer_cards.append(draw_a_card())
+    computer_cards = [draw_a_card()]
+
+    # Finalize user cards
     choice = 'y'
     while choice == 'y' and sum(user_cards) < 21:
         print(f"    Your hand: {user_cards}, score: {sum(user_cards)}")
@@ -71,13 +95,14 @@ def blackjack():
         choice = input("\nType 'y' to get another card, type 'n' to pass: ")
         if choice == 'y':
             new_card = draw_a_card()
-            print(f"    Your drew: {new_card}")
             user_cards.append(new_card)
-            if sum(user_cards) > 21 and 11 in user_cards:
-                user_cards.remove(11)
-                user_cards.append(1)
+            print(f"    Your drew: {new_card}")
+            user_cards = check_for_aces(user_cards)
+
+    # Get all the computer's card if user is not over 21
     if sum(user_cards) <= 21:
         computer_cards = get_remaining_computer_cards(computer_cards)
+
     select_winner(user_cards, computer_cards)
 
 
